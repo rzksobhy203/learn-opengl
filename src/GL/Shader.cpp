@@ -6,15 +6,15 @@
 #include <sstream>
 #include <iostream>
 
+enum class ShaderType
+{
+	NONE = -1, VERTEX = 0, FRAGMENT = 1,
+};
+
 std::tuple<std::string, std::string> Shader::parseShader() const
 {
 	std::ifstream stream(m_FilePath);
 	std::stringstream ss[2];
-
-	enum class ShaderType
-	{
-		NONE = -1, VERTEX = 0, FRAGMENT = 1,
-	};
 
 	std::string line;
 	ShaderType type = ShaderType::NONE;
@@ -52,7 +52,7 @@ unsigned int Shader::compileShader(unsigned int type, const std::string &source)
 		GLCALL(glad_glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 
 		char *message = (char*)alloca(length);
-		GLCALL(glad_glGetShaderInfoLog(id, length, &length, nullptr));
+		GLCALL(glad_glGetShaderInfoLog(id, length, &length, message));
 
 		std::cout << "[ERROR] OpenGL could not compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader\n";
 		std::cout << message << '\n';
@@ -90,7 +90,7 @@ Shader::Shader(const std::string &file_path)
 		exit(EXIT_FAILURE);
 	}
 
-	glad_glValidateProgram(m_RendererID);
+	GLCALL(glad_glValidateProgram(m_RendererID));
 	GLCALL(glad_glGetProgramiv(m_RendererID, GL_VALIDATE_STATUS, &result));
 	if (result != GL_TRUE)
 	{
@@ -123,18 +123,23 @@ void Shader::unbind()
 
 int Shader::GetUniformLocation(const std::string& name)
 {
-    GLCALL(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+    GLCALL(int location = glad_glGetUniformLocation(m_RendererID, name.c_str()));
     if (location == -1)
         std::cout << "No active uniform variable with name " << name << " found" << std::endl;
     return location;
 }
 
+void Shader::SetUniform1i(const std::string& name, int value)
+{
+    GLCALL(glad_glUniform1i(GetUniformLocation(name), value));
+}
+
 void Shader::SetUniform1f(const std::string& name, float value)
 {
-    GLCALL(glUniform1f(GetUniformLocation(name), value));
+    GLCALL(glad_glUniform1f(GetUniformLocation(name), value));
 }
 
 void Shader::SetUniform4f(const std::string& name, float f0, float f1, float f2, float f3)
 {
-    GLCALL(glUniform4f(GetUniformLocation(name), f0, f1, f2, f3));
+    GLCALL(glad_glUniform4f(GetUniformLocation(name), f0, f1, f2, f3));
 }
