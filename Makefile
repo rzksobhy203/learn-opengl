@@ -3,7 +3,7 @@ UNAME_S = $(shell uname -s)
 CC = clang
 CXX = clang++
 CFLAGS  = -x c++ -Wall -Wextra -pedantic -std=c++17 -ggdb
-CFLAGS += -Ilib/glfw/include/ -Ilib/glad/include/
+CFLAGS += -Ilib/glfw/include/ -Ilib/glad/include/ -Ilib/glm/glm/
 LDFLAGS = lib/glad/src/glad.o lib/glfw/src/libglfw3.a
 
 ifeq ($(UNAME_S), Linux)
