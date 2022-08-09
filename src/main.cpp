@@ -43,21 +43,25 @@ int main(void)
 
 	std::cout << glad_glGetString(GL_VERSION) << '\n';
 
+	GLCALL(glad_glEnable(GL_BLEND));
+	GLCALL(glad_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
 	{
 		Renderer renderer;
 		VertexArray vao;
 
 		float verticies[] = {
-			-0.5f, -0.5f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 1.0f, 0.0f,
-			 0.5f,  0.5f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 1.0f,
+			-0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 		};
 
 		VertexBuffer vbo(verticies, sizeof(verticies));
 
 		VertexArrayLayout layout;
 		layout.push<float>(2);
+		layout.push<float>(3);
 		layout.push<float>(2);
 
 		unsigned int indecies[] = {
@@ -70,14 +74,10 @@ int main(void)
 		Shader shader("res/shader.glsl");
 		shader.bind();
 
-		Texture texture1("res/container.jpg");
-		texture1.bind();
+		Texture texture2("res/container.jpg");
+		texture2.bind();
 
-		Texture texture2("res/wall.jpg");
-		texture2.bind(1);
-
-		shader.SetUniform1i("u_Texture1", 0);
-		shader.SetUniform1i("u_Texture2", 1);
+		shader.SetUniform1i("u_Texture", 0);
 
 		VertexArray::unbind();
 		VertexBuffer::unbind();
@@ -86,7 +86,7 @@ int main(void)
 
 		while (!glfwWindowShouldClose(window))
 		{
-			renderer.clear(0, 0, 0);
+			renderer.clear(0.0f, 0.0f, 0.0f);
 
 			vbo.bind();
 			vao.addBuffer(vbo, layout);
