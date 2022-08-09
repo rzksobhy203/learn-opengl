@@ -8,6 +8,7 @@
 #include "GL/VertexArray.h"
 #include "GL/VertexArrayLayout.h"
 #include "GL/VertexBuffer.h"
+#include "GL/Texture.h"
 
 #define INIT_WIDTH  800
 #define INIT_HEIGHT 600
@@ -47,15 +48,16 @@ int main(void)
 		VertexArray vao;
 
 		float verticies[] = {
-			-0.5f, -0.5f,
-			 0.5f, -0.5f,
-			 0.5f,  0.5f,
-			-0.5f,  0.5f,
+			-0.5f, -0.5f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 1.0f,
 		};
 
 		VertexBuffer vbo(verticies, sizeof(verticies));
 
 		VertexArrayLayout layout;
+		layout.push<float>(2);
 		layout.push<float>(2);
 
 		unsigned int indecies[] = {
@@ -66,6 +68,16 @@ int main(void)
 		IndexBuffer ibo(indecies, 6);
 
 		Shader shader("res/shader.glsl");
+		shader.bind();
+
+		Texture texture1("res/container.jpg");
+		texture1.bind();
+
+		Texture texture2("res/wall.jpg");
+		texture2.bind(1);
+
+		shader.SetUniform1i("u_Texture1", 0);
+		shader.SetUniform1i("u_Texture2", 1);
 
 		VertexArray::unbind();
 		VertexBuffer::unbind();
