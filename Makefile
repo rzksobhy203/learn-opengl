@@ -3,14 +3,14 @@ UNAME_S = $(shell uname -s)
 CC = clang
 CXX = clang++
 CFLAGS  = -x c++ -Wall -Wextra -pedantic -std=c++17 -ggdb
-CFLAGS += -Ilib/glfw/include/ -Ilib/glad/include/
+CFLAGS += -Ilib/glfw/include/ -Ilib/glad/include/ -Ilib/stb_image/
 LDFLAGS = lib/glad/src/glad.o lib/glfw/src/libglfw3.a
 
 ifeq ($(UNAME_S), Linux)
 	LDFLAGS += -lGLU -lGL -ldl -lpthread
 endif
 
-SRC = $(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp) $(wildcard src/**/**/**/*.cpp)
+SRC = lib/stb_image/stb_image.cpp $(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp) $(wildcard src/**/**/**/*.cpp)
 OBJ = $(SRC:.cpp=.o)
 BIN = bin
 
