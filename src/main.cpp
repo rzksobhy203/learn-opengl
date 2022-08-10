@@ -1,16 +1,30 @@
+#include <cstdio>
 #include <iostream>
+#include <tuple>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 
 #include "GL/IndexBuffer.h"
 #include "GL/Renderer.h"
 #include "GL/VertexArray.h"
 #include "GL/VertexArrayLayout.h"
 #include "GL/VertexBuffer.h"
+#include "ext/matrix_clip_space.hpp"
 
 #define INIT_WIDTH  800
 #define INIT_HEIGHT 600
+
+std::tuple<double, double> getRatio(int numerator, int dominator)
+{
+	double ratio = (double)numerator / dominator;
+	double reminder = numerator % dominator;
+
+	return { ratio * (dominator / reminder), dominator / reminder };
+}
 
 int main(void)
 {
@@ -33,6 +47,9 @@ int main(void)
 	}
 
 	glfwMakeContextCurrent(window);
+	auto [numerator, dominator] = getRatio(INIT_WIDTH, INIT_HEIGHT);
+
+
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		fprintf(stderr, "[ERROR] could not initialize GLAD\n");
@@ -65,7 +82,11 @@ int main(void)
 
 		IndexBuffer ibo(indecies, 6);
 
+		glm::mat4 proj = glm::ortho(-1 * numerator / 2, numerator / 2, -1 * dominator / 2, dominator / 2);
+
 		Shader shader("res/shader.glsl");
+		shader.bind();
+		shader.SetUniformMat4f("u_MVP", proj);
 
 		VertexArray::unbind();
 		VertexBuffer::unbind();

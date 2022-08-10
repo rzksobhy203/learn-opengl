@@ -3,6 +3,9 @@
 #include <tuple>
 #include <string>
 
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+
 class Shader
 {
 private:
@@ -15,9 +18,10 @@ public:
 	void bind() const;
 	static void unbind();
 
-	int GetUniformLocation(const std::string& name);
-	void SetUniform1f(const std::string& name, float value);
-	void SetUniform4f(const std::string& name, float f0, float f1, float f2, float f3);
+	int GetUniformLocation(const std::string &name);
+	void SetUniform1f(const std::string &name, float value);
+	void SetUniform4f(const std::string &name, float f0, float f1, float f2, float f3);
+	void SetUniformMat4f(const std::string &name, const glm::mat4 &matrix);
 private:
 	std::tuple<std::string, std::string> parseShader() const;
 	unsigned int compileShader(unsigned int type, const std::string &source) const;

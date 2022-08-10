@@ -1,11 +1,13 @@
 #shader vertex
 #version 330 core
 
-layout(location = 0) in vec2 position;
+layout (location = 0) in vec4 position;
+
+uniform mat4 u_MVP;
 
 void main()
 {
-   gl_Position = vec4(position.xy, 0.0f, 1.0f);
+   gl_Position = u_MVP * position;
 }
 
 #shader fragment
